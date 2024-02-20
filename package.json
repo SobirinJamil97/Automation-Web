@@ -42,7 +42,7 @@
     "wdio-wait-for": "^3.0.7"
   },
   "scripts": {
-    "test": "wdio run ./wdio.conf.js --spec %npm_config_feature%",
+    "test": "wdio run ./wdio.conf.js --spec $npm_config_feature",
     "test-tag": "wdio run ./wdio.conf.js --spec ./features/*.feature --cucumberOpts.tags=\"$npm_config_tag\"",
     "wdio": "wdio run ./wdio.conf.js",
     "report": "allure generate ./allure-results --clean && allure open"
