@@ -3,18 +3,21 @@ const Page = require('./page');
 const { browser } = require('@wdio/globals');
 const { faker } = require('@faker-js/faker');
 
-var lastName = faker.person.lastName("male");
-var firstName = faker.person.firstName("male");
-var dateDOB = faker.number.int({min: 1, max: 30});
-var monthDOB = faker.number.int({min: 1, max: 12});
-var yearDOB = faker.number.int({min: 1990, max: 2009});
+
+// var lastName = faker.person.lastName("male");
+// var firstName = faker.person.firstName("male");
+// let dateDOB = faker.number.int({min: 1, max: 30});
+// let monthDOB = faker.number.int({min: 1, max: 12});
+// let yearDOB = faker.number.int({min: 1970, max: 2006});
+let birthDOB = faker.date.between({ from: '1970-01-01T00:00:00.000Z', to: '2006-01-01T00:00:00.000Z' });
 
 
 class ProfilePage extends Page {
 
     //get element user profile
     get btnChgProfile () {
-        return $('/html/body/div[1]/div[1]/div/div/div[2]/div/div[2]/div/div/div[3]/button[1]');
+        //return $('/html/body/div[1]/div[1]/div/div/div[2]/div/div[2]/div/div/div[3]/button[1]');
+        return $("(//button[text()='Change Profile'])[2]"); //sandra
     }
 
     get myAccountPage () {
@@ -33,12 +36,28 @@ class ProfilePage extends Page {
         return $('#lastName');
     }
 
+    //sandra new edit
+    get radioBtnGender () {
+        return $("//input[@value='"+tempGender+"']/parent::span");
+    }
+
     get radioBtnFemale () {
         return $('//input[@value="F"]');
     }
 
     get radioBtnMale () {
         return $('//input[@value="M"]');
+    }
+
+    //sandra new edit
+    get spanRadioChecked () {
+        //return $('//*[@id="__next"]/div[1]/div/div[2]/form/div[1]/div[6]/div/div/label[1]/span[1]')
+        return $("//input[@value='"+tempGender+"']/parent::span");
+    }
+
+    //sandra new edit
+    get spanRadioUnchecked () {
+        return $('//*[@id="__next"]/div[1]/div/div[2]/form/div[1]/div[6]/div/div/label[2]/span[1]');
     }
 
     get svgClassFemale () {
@@ -58,7 +77,20 @@ class ProfilePage extends Page {
     }
 
     get fieldDOB () {
-        return $('//input[@placeholder="Enter DOB"]')
+        // return $('//input[@placeholder="Enter DOB"]');
+        return $("//input[@id='dob']");
+    }
+
+    get helperTextFirstName () {
+        return $('//p[@id="firstName-helper-text"]')
+    }
+
+    get helperTextLastName () {
+        return $('//p[@id="lastName-helper-text"]')
+    }
+
+    get helperTextDOB () {
+        return $('//p[@id="dob-helper-text"]')
     }
 
     get btnSaveProfile () {
@@ -70,15 +102,18 @@ class ProfilePage extends Page {
     }
 
     get myAccountName () {
-        return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/h2/span');
+        //return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/h2/span');
+        return $("(//button[text()='Change Profile'])[2]/parent::div/preceding-sibling::div/h2");
     }
 
     get myAccountGender () {
-        return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/div[2]/div[2]/h4');
+        //return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/div[2]/div[2]/h4');
+        return $("//span[normalize-space()='Jenis Kelamin']/following-sibling::h4");
     }
 
     get myAccountEmail () {
-        return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/div[2]/div[3]/h4')
+        //return $('//*[@id="__next"]/div[1]/div/div/div[2]/div/div[2]/div/div/div[2]/div[2]/div[3]/h4')
+        return $("//span[normalize-space()='Email']/following-sibling::h4");
     }
 
     //change phone number
@@ -125,6 +160,23 @@ class ProfilePage extends Page {
         return $("//p[@id='email-helper-text']");
     }
 
+//SDC--
+    get fieldEmailReg() {
+        return $("//input[@id='email']");
+    }
+
+    get fieldDOBReg() {
+        return $("//input[@id='dob']");
+    }
+
+    get checkboxAgreement() {
+        return $("//input[@name='agreement']");
+    }
+
+    get btnSubmit() {
+        return $("//button[text()='Submit']");
+    }
+//--SDC
 
     //action
     async clickChgProfile () {
@@ -139,17 +191,53 @@ class ProfilePage extends Page {
         await this.fieldFirstName.clearValue();
     }
 
+    // async typeFirstName () {
+    //     await this.fieldFirstName.setValue(firstName);
+    // }
+
+    //sandra new edit
     async typeFirstName () {
+        if(tmpGdrFirst == "M"){
+            tmpGdrFirst = "male";
+        } else {
+            tmpGdrFirst = "female";
+        }
+
+        let firstName = faker.person.firstName(tmpGdrFirst);
         await this.fieldFirstName.setValue(firstName);
+    }
+
+    async typeInvalidFirstName () {
+        await this.fieldFirstName.setValue(tempInvalidFirstName);
+    }
+
+    //sandra new edit
+    async typeLastName () {
+        if(tmpGdrLast == "M"){
+            tmpGdrLast = "male";
+        } else {
+            tmpGdrLast = "female";
+        }
+
+        let lastName = faker.person.lastName(tmpGdrLast);
+        const specialCharsRegex = /[^\w\s]/gi; 
+        if (lastName.match(specialCharsRegex)) {
+            lastName = lastName.replace(specialCharsRegex, ' ');
+        }
+        await this.fieldLastName.setValue(lastName);
+    }
+
+    async typeInvalidLastName () {
+        await this.fieldLastName.setValue(tempInvalidLastName);
     }
 
     async clearLastName () {
         await this.fieldLastName.clearValue();
     }
 
-    async typeLastName () {
-        await this.fieldLastName.setValue(lastName);
-    }
+    // async typeLastName () {
+    //     await this.fieldLastName.setValue(lastName);
+    // }
 
     async getFirstName () {
         return (await this.fieldFirstName.getValue());
@@ -159,6 +247,11 @@ class ProfilePage extends Page {
         return (await this.fieldLastName.getValue());
     }
 
+    //sandra new edit
+    async selectGenderProfile () {
+        await this.radioBtnGender.click();
+    }
+
     async selectFemale () {
         await this.radioBtnFemale.click();
     }
@@ -166,12 +259,11 @@ class ProfilePage extends Page {
     async selectMale () {
         await this.radioBtnMale.click();
     }
-
-    async getSvgChecked () {
-        return ((await this.svgClassFemale).getAttribute('class')); 
+    async getRadioCheckedClass () {
+        return ((await this.radioBtnGender).getAttribute('class')); 
     }
 
-    async getSvgNotChecked () {
+    async getSpanRadioChecked () {
         return ((await this.svgClassMale).getAttribute('class')); 
     }
 
@@ -187,20 +279,56 @@ class ProfilePage extends Page {
     // }
 
     async typeDateDOB () {
+        console.log("Isi dari variable dateDOB = "+dateDOB);
         await this.fieldDOB.click();
-        await this.fieldDOB.setValue(dateDOB);
+        if (dateDOB > 1 && dateDOB < 10) {
+            let strDate = dateDOB.toString();
+            let strDateDOB = "0" + strDate;
+            await this.fieldDOB.setValue(strDateDOB);
+        } else {
+            await this.fieldDOB.setValue(dateDOB);
+        }
+        await browser.pause(1000);
     }
 
     async typeMonthDOB () {
-        await this.fieldDOB.setValue(monthDOB);
+        console.log("Isi dari variable monthDOB = "+monthDOB);
+        await this.fieldDOB.click();
+        if (monthDOB > 0 && monthDOB < 10) {
+            let strMonth = monthDOB.toString();
+            let strMonthDOB = "0" + strMonth;
+            await this.fieldDOB.setValue(strMonthDOB);
+        } else {
+            await this.fieldDOB.setValue(monthDOB);
+        }
+        await browser.pause(1000);
     }
 
     async typeYearDOB () {
+        console.log("Isi dari variable yearDOB: "+yearDOB);
         await this.fieldDOB.setValue(yearDOB);
+    }
+
+    async typeDatebirth () {
+        console.log("Isi dari variable datebirth = "+birthDOB);
+        const timestampDOB = birthDOB.toISOString();
+        console.log("Isi dari variable timestampDOB = "+timestampDOB);
+        // Memisahkan string berdasarkan tanda hubung (-) dan T
+        const parts = timestampDOB.split(/[-T]/);
+        const year = parts[0];
+        const month = parts[1];
+        const day = parts[2].substr(0, 2); // substr(0, 2) digunakan untuk mendapatkan dua karakter pertama (tanggal)
+        const strDatebirth = month+day+year;
+        console.log("Isi dari strDatebirth = "+strDatebirth);
+        await this.fieldDOB.setValue(strDatebirth);
     }
 
     async getDOB () {
         return (await this.fieldDOB.getValue());
+    }
+
+    async clearDOB () {
+        await this.fieldDOB.clearValue();
     }
 
     //change phone number
@@ -257,6 +385,46 @@ class ProfilePage extends Page {
         return (await this.fieldEmail.getValue());
     }
 
+//SDC--    
+    async typePhoneNumber(number) {
+        return this.fieldPhoneNumber.setValue(number);
+    }
+
+    async clickAgreement() {
+        return this.checkboxAgreement.click();
+    }
+
+    async clickSubmit() {
+        return this.btnSubmit.click();
+    }
+
+    async typeEmailReg(email_acc) {
+        return this.fieldEmailReg.setValue(email_acc)
+    }
+
+    async emptyFirstName() {
+        // const selectorValue = this.fieldFirstName.getValue();
+        // const backSpaces = new Array(selectorValue.length).fill('Backspace');
+        await this.fieldFirstName.doubleClick();
+        await browser.keys(['Backspace']);
+        await this.fieldFirstName.doubleClick();
+        await browser.keys(['Backspace']);
+    }
+
+    async emptyLastName() {
+        await this.fieldLastName.doubleClick();
+        await browser.keys(['Backspace']);
+        await this.fieldLastName.doubleClick();
+        await browser.keys(['Backspace']);
+    }
+
+    async emptyDOB() {
+        await this.fieldDOB.doubleClick();
+        await browser.keys(['Backspace']);
+        await this.fieldDOB.doubleClick();
+        await browser.keys(['Backspace']);
+    }
+//--SDC
 
     open () {
         return super.open();

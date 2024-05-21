@@ -59,18 +59,31 @@ class LoginPage extends Page {
         return $("//a[contains(@href,'/my-account')]/span/p");
     }
 
+    get registerForm() {
+        // return $("//h1[text()='Complete your profile']");
+        return $("//h1[text()='Complete your profile']/following-sibling::form");
+    }
+
+    get loginErrorMessage() {
+        return $("//p[@id='identifier-helper-text']");
+    }
+
 
 
     async typeEmail(email) {
+        await browser.pause(1000);
         await this.inputPhoneEmail.setValue(email);
-        await browser.pause(500);
+        await browser.pause(1000);
         await this.btnLoginRegister.click();
+        await browser.pause(500);
     }
 
     async typeOtp(otp) {
+        await browser.pause(1000);
         await this.inputOtp.setValue(otp);
-        await browser.pause(500);
+        await browser.pause(1000);
         await this.btnVerifyOtp.click();
+        await browser.pause(500);
     }
 
     async clearPhoneNumber() {

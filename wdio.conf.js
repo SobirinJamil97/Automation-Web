@@ -1,4 +1,5 @@
 const { TimelineService } = require('wdio-timeline-reporter/timeline-service');
+// const allure = require('allure-commandline');
 
 const today = new Date();
 let yy = today.getFullYear();
@@ -37,7 +38,7 @@ exports.config = {
     // will be called from there.
     //
     specs: [
-        './features/**/*.feature'
+        './features/login/*.feature'
     ],
     // Patterns to exclude.
     exclude: [
@@ -45,6 +46,16 @@ exports.config = {
 //        './feature/home.feature',
 //        './feature/clp.feature'
     ],
+    suites: {
+        login: ['./features/login/*.feature'],
+        cart: ['./features/cart/*.feature'],
+        checkout: ['./features/checkout/*.feature'],
+        checkout_shipping: ['./features/checkout-shipping/*.feature'],
+        membership: ['./features/membership/*.feature'],
+        products: ['./features/products/*.feature'],
+        register: ['./features/register/*.feature'],
+        view_edit_profile: ['./features/view-edit-profile/*.feature']
+    },
     //
     // ============
     // Capabilities
@@ -61,14 +72,24 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 1,
+    maxInstances: 3,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'firefox'
+        browserName: 'chrome'
+        // myChromeBrowser0: {
+        //     capabilities: {
+        //         browserName: 'chrome'
+        //     }
+        // },
+        // myFirefoxBrowser0: {
+        //     capabilities: {
+        //         browserName: 'firefox'
+        //     }
+        // }
     }],
 
     //
@@ -102,7 +123,21 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    // baseUrl: 'https://web.staging-v1.tbsgroup.co.id/',
+    // baseUrl: {
+    //     staging: 'https://web.staging-v1.tbsgroup.co.id/',
+    //     preprod: 'https://uat-internal.thebodyshop.co.id/'
+    // },
+    baseUrl: process.env.BASE_URL || 'https://web.staging-v1.tbsgroup.co.id/',
+    // baseUrl: (() => {
+    //     if (process.env.NODE_ENV === 'staging') {
+    //         return 'https://web.staging-v1.tbsgroup.co.id/';
+    //     } else if (process.env.NODE_ENV === 'preprod') {
+    //         return 'https://uat-internal.thebodyshop.co.id/';
+    //     } else {
+    //         return 'https://web.staging-v1.tbsgroup.co.id/'; // Default base URL
+    //     }
+    // })(),
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -150,9 +185,29 @@ exports.config = {
     // ALLURE
     // reporters: [['allure', {
     //     outputDir: 'allure-results',
-    //     disableWebdriverStepsReporting: false,
+    //     disableWebdriverStepsReporting: true,
     //     disableWebdriverScreenshotsReporting: false,
     // }]],
+    // onComplete: function() {
+    //     const reportError = new Error('Could not generate Allure report')
+    //     const generation = allure(['generate', 'allure-results', '--clean'])
+    //     return new Promise((resolve, reject) => {
+    //         const generationTimeout = setTimeout(
+    //             () => reject(reportError),
+    //             5000)
+
+    //         generation.on('exit', function(exitCode) {
+    //             clearTimeout(generationTimeout)
+
+    //             if (exitCode !== 0) {
+    //                 return reject(reportError)
+    //             }
+
+    //             console.log('Allure report successfully generated')
+    //             resolve()
+    //         })
+    //     })
+    // },
 
     // TIMELINE
     reporters: ['spec',['timeline', {

@@ -46,6 +46,13 @@ Then(/^Name should available$/, async() => {
 
 Then(/^Point information should available$/, async() => {
     await expect(MembershipPage.pointInformation).toBeDisplayed();
+    let pointExpired = await MembershipPage.btnPointExpiration.isDisplayed();
+    console.log("Ada poin expired? "+pointExpired);
+    if(pointExpired==true){
+        await expect(MembershipPage.pointExpirationInfo).toBeDisplayed();
+    } else {
+        await expect(MembershipPage.pointExpirationInfo).not.toBeDisplayed();
+    }
 })
 
 Then(/^Progress tier should available$/, async() => {
@@ -199,4 +206,16 @@ When(/^User click How to Redeem Points$/, async() => {
 Then(/^How to Redeem Points page should open$/, async() => {
     await expect(MembershipPage.titleHowToRedeemPoint).toBeDisplayed();
     await browser.pause(2000);
+})
+
+Then(/^Title Point Activities should available$/, async() => {
+    await expect(MembershipPage.titlePointActivities).toBeDisplayed();
+})
+
+Then(/^Tab Activities should available$/, async() => {
+    await expect(MembershipPage.tabActivities).toBeDisplayed();
+})
+
+Then(/^Tab Will Expired should available$/, async() => {
+    await expect(MembershipPage.tabWillExipred).toBeDisplayed();
 })

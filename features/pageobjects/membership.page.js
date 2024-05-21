@@ -28,15 +28,16 @@ class Membership extends Page{
     }
 
     get lblTierCardnumber(){
-        return $("//span[normalize-space()='FAN - 51697533784000265']");
+        return $("//a[contains(@href,'/tools/qrcode')]/span");
     }
 
     get membershipAccountName(){
-        return $("//span[normalize-space()='Akun Tester 1017 Staging']");
+        return $("//a[contains(@href,'/tools/qrcode')]/following-sibling::span");
     }
 
     get pointInformation(){
-        return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-v485bh'])[1]");
+        // return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-v485bh'])[1]");
+        return $("//a[contains(@href,'/membership/point-activities')]/div/p");
     }
 
     get starter(){
@@ -144,15 +145,18 @@ class Membership extends Page{
     }
 
     get descMyQRCode(){
-        return $("(//p[@class='MuiTypography-root MuiTypography-body2 mui-style-1e3oiaj'])[1]");
+        // return $("(//p[@class='MuiTypography-root MuiTypography-body2 mui-style-1e3oiaj'])[1]");
+        return $("//h3[text()='My QR Code']/following-sibling::p");
     }
 
     get textExpirationTimer(){
         return $("//p[normalize-space()='Expired In']");
+        // return $("//h3[text()='My QR Code']/parent::div/following-sibling::div/div/div/p[1]");
     }
 
     get expirationTimer(){
-        return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-19qgnyg'])[1]");
+        // return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-19qgnyg'])[1]");
+        return $("//h3[text()='My QR Code']/parent::div/following-sibling::div/div/div/p[2]");
     }
 
     get qrCode(){
@@ -160,11 +164,13 @@ class Membership extends Page{
     }
 
     get cardnumber(){
-        return $("//a[normalize-space()='51697533784000265']");
+        // return $("//a[normalize-space()='51697533784000265']");
+        return $("//h3[text()='My QR Code']/parent::div/following-sibling::div/span/a");
     }
 
     get btnGenerateQR(){
-        return $("//p[normalize-space()='Regenerate QR Code']");
+        // return $("//p[normalize-space()='Regenerate QR Code']");
+        return $("//p[text()='Regenerate QR Code']/parent::button");
     }
 
     get regenerateAgain(){
@@ -172,11 +178,11 @@ class Membership extends Page{
     }
 
     get breadcrumbPointHistory(){
-        return $("//h5[normalize-space()='point history']");
+        return $("//h5[normalize-space()='point activities']");
     }
 
     get titlePointHistory(){
-        return $("//h1[normalize-space()='Point History']");
+        return $("//h1[normalize-space()='Point Activities']");
     }
 
     get breadcrumbFaq(){
@@ -190,6 +196,32 @@ class Membership extends Page{
     get titleHowToRedeemPoint(){
         return $("//p[normalize-space()='How to Redeem Points']");
     }
+
+
+    get btnPointExpiration(){
+        return $("//a[contains(@href,'/membership/point-activities?tab=will_expired')]");
+    }
+
+    get pointExpirationInfo(){
+        return $("//a[contains(@href,'/membership/point-activities?tab=will_expired')]/div/div/p");
+    }
+
+    get titlePointActivities(){
+        return $("//h1[text()='Point Activities']");
+    }
+
+    get tabActivities(){
+        return $("//button[text()='Activities']");
+    }
+
+    get tabWillExipred(){
+        return $("//button[text()='Will Expired']");
+    }
+
+    // get textExpiredIn(){
+    //     return $("//h3[text()='My QR Code']/parent::div/following-sibling::div/div/div/p[1]")
+    // }
+
 
 
 

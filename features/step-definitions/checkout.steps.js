@@ -8,7 +8,6 @@ const CheckoutPage = require('../pageobjects/checkout.page');
 const TransactionPage = require('../pageobjects/transaction.page');
 
 
-
 const pages = {
     cart: CheckoutPage
 }
@@ -26,6 +25,16 @@ When(/^User select shipping method SAP Regular$/, async() => {
 //    int_SAPRegCost = parseInt(nominal_SAPRegCost.replace(/\./g, ''), 10);
 });
 
+//sandra
+When(/^User select shipping method SAP Regular in shipping method$/, async() => {
+    await browser.pause(2000);
+    await CheckoutPage.clickRadioSAPRegular();
+    await browser.pause(1000);
+    SAPRegCost = await CheckoutPage.shippingCostSapRegular.getText();
+    numericValueSAPRegCost = parseInt(SAPRegCost.replace(/[^\d]/g, ''), 10);
+    console.log("Numeric shipping cost dari list: "+numericValueSAPRegCost);
+});
+
 When(/^User select payment method VA BCA$/, async() => {
     await CheckoutPage.clickTabVirtualAccount();
     await CheckoutPage.clickRadioBCAVA();
@@ -37,7 +46,8 @@ Then(/^Payment popup should available$/, async() => {
     await browser.pause(2000);
 });
 
-When(/^User click Back To Merchant$/, async() => {
+// When(/^User click Back To Merchant$/, async() => {
+When(/^User click Check Status$/, async() => {    
     await browser.pause(2000);
 //    await CheckoutPage.clickBackToMerchant();
 
@@ -57,8 +67,10 @@ When(/^User click Back To Merchant$/, async() => {
 //    browser.$("#snap-midtrans").frame();
     const my_frame = await $("//iframe[@id='snap-midtrans']");
     browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//button[@type='button']").click();
+    // await $("//div[@class='close-snap-button clickable']");
     browser.switchToParentFrame();
 });
 
@@ -75,7 +87,8 @@ When(/^User click Lakukan Pembayaran$/, async() => {
 When(/^User click Copy$/, async() => {
     const my_frame = await $("//iframe[@id='snap-midtrans']");
     browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//div[@class='float-right clickable copy']").click();
 //    browser.switchToParentFrame();
 })
@@ -117,6 +130,50 @@ Then(/^Transaction detail page should open$/, async() => {
     await expect(TransactionPage.titleTransactionDetail).toBeDisplayed();
     await expect(TransactionPage.textStatusPaid).toBeDisplayed();
     await expect(TransactionPage.transactionNo).toHaveText(orderNumber);
+})
+
+//sandra
+Then(/^Shipping method in detail transaction is (.+)$/, async (selectedShippingMethod) => {
+    await expect(TransactionPage.titleShippingDetail).toBeDisplayed();
+    await expect(TransactionPage.shippingMethodDetail).toHaveText(selectedShippingMethod);
+});
+
+//sandra
+Then(/^Shipping address name is (.+) in detail transaction$/, async (shippingNamaLengkap) => {
+    await expect(TransactionPage.shippingAddressDetailName).toHaveText(shippingNamaLengkap);
+});
+
+//sandra
+Then(/^Shipping address phone number is (.+) in detail transaction$/, async (shippingPhNumber) => {
+    await expect(TransactionPage.shippingAddressDetailPhNumber).toHaveText(shippingPhNumber);
+});
+
+//sandra
+Then(/^Shipping address full address is (.+) in detail transaction$/, async (shippingAddress) => {
+    await expect(TransactionPage.shippingAddressDetailAddress).toHaveText(shippingAddress);
+});
+
+Then(/^Shipping name (.+) and shipping detail in transaction detail should be correct$/, async (selectedShippingMethod) => {
+    await expect(TransactionPage.titleShippingDetail).toBeDisplayed();
+    await expect(TransactionPage.shippingMethodDetail).toHaveText(selectedShippingMethod);
+    await expect(TransactionPage.shippingAddressDetailName).toHaveText(tempFullName);
+    await expect(TransactionPage.shippingAddressDetailPhNumber).toHaveText(tempPhoneNumber);
+    // Memisahkan string berdasarkan tanda hubung ,
+    const parts = tempKecamatan.split(/[,]/);
+    const splitKec = parts[0];
+    const splitWilayah = parts[1];
+    const splitProvinsi = parts[2];
+    const strKecamatan = splitKec+","+splitProvinsi+","+splitWilayah;
+    console.log("Isi dari strKecamatan = "+strKecamatan);
+    const strAddress = tempAddress+" "+strKecamatan;
+    console.log("Isi dari strAddress = "+strAddress);
+    //await expect(TransactionPage.shippingAddressDetailAddress).toHaveTextContaining(tempAddress);
+    await expect(TransactionPage.shippingAddressDetailAddress).toHaveText(strAddress);
+});
+
+Then(/^(.+) shipping method should applied$/, async(shippingMethod) => {
+    await expect(CheckoutPage.appliedShippingMethod).toHaveText(shippingMethod);
+    await browser.pause(1000);
 })
 
 Then(/^Send As Gift section should available$/, async() => {
@@ -238,7 +295,14 @@ Then(/^Shipping address section should available$/, async() => {
 })
 
 When(/^User click address list box$/, async() => {
-    await CheckoutPage.clicklistboxAddress();
+    await browser.pause(2000);
+    let tempTambahAddress = await CheckoutPage.btnTambahAlamat.isDisplayed();
+    console.log("Isi dari tempTambahAddress = " + tempTambahAddress);
+    if (tempTambahAddress == false) {
+        await CheckoutPage.clicklistboxAddress();
+    } else {
+        await CheckoutPage.clickTambahAlamat();
+    }
 })
 
 When(/^User click Tambah Alamat$/, async() => {
@@ -343,6 +407,7 @@ When(/^User input nomor ponsel (.+)$/, async(nomor) => {
 
 //sandra
 When(/^User clear nomor ponsel$/, async() => {
+    browser.pause(3000);
     await CheckoutPage.clearNomorPonsel();
     browser.pause(2000);
 })
@@ -361,7 +426,7 @@ When(/^User input kecamatan (.+)$/, async(kecamatan) => {
 //    await CheckoutPage.typeKecamatan(kecamatan);
     await CheckoutPage.typeKecamatan2(kecamatan); //sandra
     //await browser.pause(500);
-    await CheckoutPage.opsiKecamatan.moveTo();
+    //await CheckoutPage.opsiKecamatan.click();
     //await browser.keys(['Enter']);
     //(await CheckoutPage.inputFieldKecamatan).selectByAttribute('aria-activedescendant', 'Serpong, Tangerang Selatan, Banten');
 //    await $("//div[@class='MuiAutocomplete-popper mui-style-1le80r3']").selectByVisibleText("Ayah, Kebumen, Jawa Tengah");
@@ -387,7 +452,7 @@ When(/^User click Pilih Kode Pos and select postal code (.+)$/, async(userPostal
 
 //sandra
 When(/^User clear kecamatan field$/, async() => {
-    await CheckoutPage.clearFieldButton.moveTo();
+    await CheckoutPage.clearFieldKecamatan.moveTo();
     await CheckoutPage.clickClearKecamatan();
     browser.pause(3000);
 })
@@ -413,12 +478,24 @@ When(/^User click Atur Titik Lokasi and Titik Lokasi should open$/, async() => {
 })
 
 //sandra
+When(/^User click Ubah Titik Lokasi and Titik Lokasi should open$/, async() => {
+    //await CheckoutPage.clickUbahTitikLokasi();
+    await CheckoutPage.clickTitikLokasiFront();
+    browser.pause(2000);
+    await expect(CheckoutPage.formTambahAlamatBaru).toBeDisplayed();
+    await expect(CheckoutPage.titleFormTitikLokasi).toBeDisplayed();
+})
+
+
+//sandra
 When(/^User input Titik Lokasi (.+)$/, async(titikLokasi) => {
     await CheckoutPage.typeTitikLokasi(titikLokasi);
     await browser.pause(4000);
     await browser.keys(['ArrowDown']);
     await browser.keys(['Enter']);
     await browser.pause(4000);
+    tempTitikLokasi = await CheckoutPage.inputTitikLokasi.getValue();
+    console.log("Isi variable: "+tempTitikLokasi);
 })
 
 //sandra
@@ -428,13 +505,9 @@ When(/^User click save Titik Lokasi$/, async() => {
 
 //sandra
 When(/^User clear Titik Lokasi$/, async() => {
-    if ((await CheckoutPage.inputTitikLokasi).getValue("")) {
-        console.log("Titik lokasi kosong");
-    } else {
-        await CheckoutPage.clearFieldButton.moveTo();
-        await CheckoutPage.clickClearTitikLokasi();
-        await browser.pause(4000);   
-    }
+    await CheckoutPage.clearFieldTitikLokasi.moveTo();
+    await CheckoutPage.clickClearTitikLokasi();
+    await browser.pause(4000);   
 })
 
 
@@ -473,9 +546,27 @@ Then(/^Selected shipping address is (.+)$/, async(namaalamat) => {
 })
 
 //sandra
+// When(/^User select address name (.+)$/, async(namaalamat) => {
+//     const liAddress = CheckoutPage.dropdownAddressList.$(`li=` + namaalamat);
+//     liAddress.click();
+// })
+
+//sandra
 When(/^User select address name (.+)$/, async(namaalamat) => {
     const liAddress = CheckoutPage.dropdownAddressList.$(`li=` + namaalamat);
     liAddress.click();
+    await browser.pause(2000);
+    tempFullName = await CheckoutPage.shippingAddressNamaLengkap.getText();
+    tempPhoneNumber = await CheckoutPage.shippingAddressNomorPonsel.getText();
+    tempAddress = await CheckoutPage.shippingAddressAlamatLengkap.getText();
+    console.log("Isi dari tempFullName = "+tempFullName);
+    console.log("Isi dari tempPhoneNumber = "+tempPhoneNumber);
+    console.log("Isi dari tempAddress = "+tempAddress);
+    await CheckoutPage.clickUbah();
+    tempKecamatan = await CheckoutPage.inputFieldKecamatan.getValue();
+    await CheckoutPage.btnCloseFormUbahAlamat.click();
+    await CheckoutPage.btnYesImSure.click();
+    console.log("Isi dari tempKecamatan = "+tempKecamatan);
 })
 
 //sandra for future use maybe
@@ -522,6 +613,17 @@ Then(/^Pesan pengiriman is (.+)$/, async(pesanpengiriman) => {
     await expect(CheckoutPage.shippingAddressPesanPengiriman).toHaveText(pesanpengiriman);
 })
 
+//sandra
+Then(/^Titik Lokasi GO-SEND is correct$/, async() => {
+    await browser.pause(2000);
+    await expect(CheckoutPage.addressTitikLokasiGOSEND).toHaveText(tempTitikLokasi);
+})
+
+//sandra
+Then(/^Pesan pengiriman GO-SEND is (.+)$/, async(pesanpengiriman) => {
+    await expect(CheckoutPage.pesanTitikLokasiGOSEND).toHaveText(pesanpengiriman);
+})
+
 When(/^User click Ubah$/, async() => {
     await CheckoutPage.clickUbah();
 })
@@ -534,6 +636,7 @@ Then(/^Form Ubah Alamat should open$/, async() => {
 When(/^User click Ubah and form edit address should open$/, async() => {
     await CheckoutPage.clickUbah();
     await expect(CheckoutPage.titleFormUbahAlamat).toBeDisplayed();
+    await browser.pause(4000);
 })
 
 Then(/^Popup message (.+) should open$/, async(pesan) => {
@@ -580,6 +683,12 @@ Then(/^Shipping method section should available$/, async() => {
     await expect(CheckoutPage.titleShippingMethodSection).toBeDisplayed();
 })
 
+//sandra param
+Then(/^Section with (.+) label should available$/, async(labelMethod) => {
+    tempLabelMethod = labelMethod;
+    await expect(CheckoutPage.labelTitleMethod).toBeDisplayed();
+})
+
 Then(/^Pengiriman regular should available$/, async() => {
     await expect(CheckoutPage.labelPengirimanRegular).toBeDisplayed();
 })
@@ -587,6 +696,11 @@ Then(/^Pengiriman regular should available$/, async() => {
 Then(/^Pengiriman express should available$/, async() => {
     await expect(CheckoutPage.labelPengirimanExpress).toBeDisplayed();
 })
+
+Then(/^Pengiriman instant should available$/, async() => {
+    await expect(CheckoutPage.labelPengirimanInstant).toBeDisplayed();
+})
+
 
 Then(/^SAP Regular shipping method should available$/, async() => {
     await expect(CheckoutPage.labelSapRegular).toBeDisplayed();
@@ -606,6 +720,15 @@ Then(/^SAP Regular estimation day should available$/, async() => {
 
 Then(/^SAP Regular shipping cost should available$/, async() => {
     await expect(CheckoutPage.shippingCostSapRegular).toBeDisplayed();
+})
+
+//sandra
+Then(/^SAP Regular should available on shipping method$/, async() => {
+    await expect(CheckoutPage.labelSapRegular).toBeDisplayed();
+    await expect(CheckoutPage.imgSapRegular).toBeDisplayed();
+    await expect(CheckoutPage.estimationDaySapRegular).toBeDisplayed();
+    await expect(CheckoutPage.shippingCostSapRegular).toBeDisplayed();
+    await expect(CheckoutPage.radioSAPRegular).toBeDisplayed();
 })
 
 Then(/^SAP Express shipping method should available$/, async() => {
@@ -628,6 +751,37 @@ Then(/^SAP Express shipping cost should available$/, async() => {
     await expect(CheckoutPage.shippingCostSapExpress).toBeDisplayed();
 })
 
+//sandra element param
+Then(/^(.+) should available on shipping method section$/, async(shippingMethod) => {
+    tempShipMethod = shippingMethod;
+    await expect(CheckoutPage.labelShippingMethodList).toBeDisplayed();
+    await expect(CheckoutPage.imgShippingMethodList).toBeDisplayed();
+    await expect(CheckoutPage.estimationDayShippingMethod).toBeDisplayed();
+    await expect(CheckoutPage.costShippingMethod).toBeDisplayed();
+    await expect(CheckoutPage.radioBtnShippingMethod).toBeDisplayed();
+})
+
+//sandra
+Then(/^SAP Express should available on shipping method$/, async() => {
+    await expect(CheckoutPage.labelSapExpress).toBeDisplayed();
+    await expect(CheckoutPage.imgSapExpress).toBeDisplayed();
+    await expect(CheckoutPage.estimationDaySapExpress).toBeDisplayed();
+    await expect(CheckoutPage.shippingCostSapExpress).toBeDisplayed();
+    await expect(CheckoutPage.radioSAPExpress).toBeDisplayed();
+})
+
+//sandra
+Then(/^GO-SEND Instant should available on shipping method$/, async() => {
+    await expect(CheckoutPage.labelGOSENDInstant).toBeDisplayed();
+    await expect(CheckoutPage.imgGOSENDInstant).toBeDisplayed();
+    await expect(CheckoutPage.estimationDayGOSENDInstant).toBeDisplayed();
+    await expect(CheckoutPage.shippingCostGOSENDInstant).toBeDisplayed();
+    await expect(CheckoutPage.radioGOSENDInstant).toBeDisplayed();
+    await expect(CheckoutPage.labelTitikLokasiGOSEND).toBeDisplayed();
+    await expect(CheckoutPage.addressTitikLokasiGOSEND).toBeDisplayed();
+    await expect(CheckoutPage.pesanTitikLokasiGOSEND).toBeDisplayed();
+})
+
 Then(/^(.+) shipping method should applied$/, async(shippingMethod) => {
     await expect(CheckoutPage.appliedShippingMethod).toHaveText(shippingMethod);
     await browser.pause(1000);
@@ -647,17 +801,26 @@ When(/^User select shipping method SiCepat Regular$/, async() => {
     await CheckoutPage.clickRadioSiCepatRegular();
 })
 
+//sandra shipping with param
+When(/^User select (.+) shipping method$/, async(shippingMethod) => {
+    tempShipMethod = shippingMethod;
+    await browser.pause(2000);
+    await CheckoutPage.clickRadioBtnShipMethod();
+    await browser.pause(1000);
+    txtShipCost = await CheckoutPage.costShippingMethod.getText();
+    numericShipCost = parseInt(txtShipCost.replace(/[^\d]/g, ''), 10);
+    console.log("Numeric shipping cost dari list: "+numericShipCost);
+})
+
 
 //sandrashipping
-When(/^User select shipping method SAP Express$/, async() => {
+When(/^User select shipping method SAP Express in shipping method$/, async() => {
     await browser.pause(2000);
     await CheckoutPage.clickRadioSAPExpress();
     await browser.pause(1000);
-    SAPExpCost = CheckoutPage.shippingCostSapExpress.getText();
-    SAPExpCost.then((text) => {
-        numericValueSAPExpCost = parseInt(text.replace(/[^\d]/g, ''), 10);
-        console.log(numericValueSAPExpCost);
-    });
+    SAPExpCost = await CheckoutPage.shippingCostSapExpress.getText();
+    numericValueSAPExpCost = parseInt(SAPExpCost.replace(/[^\d]/g, ''), 10);
+    console.log("Numeric shipping cost dari list: "+numericValueSAPExpCost);
 })
 
 //sandrashipping
@@ -665,11 +828,9 @@ When(/^User select shipping method GO-SEND Instant$/, async() => {
     await browser.pause(2000);
     await CheckoutPage.clickRadioGOSENDInstant();
     await browser.pause(1000);
-    GOSENDInsCost = CheckoutPage.shippingCostGOSENDInstant.getText();
-    GOSENDInsCost.then((text) => {
-        numericValueGOSENDInstantCost = parseInt(text.replace(/[^\d]/g, ''), 10);
-        console.log(numericValueGOSENDInstantCost);
-    });
+    GOSENDInsCost = await CheckoutPage.shippingCostGOSENDInstant.getText();
+    numericValueGOSENDInstantCost = parseInt(GOSENDInsCost.replace(/[^\d]/g, ''), 10);
+    console.log("Numeric shipping cost dari list: "+numericValueGOSENDInstantCost);
 })
 
 Then(/^Voucher section should available$/, async() => {
@@ -1031,26 +1192,15 @@ Then(/^Total payment using (.+) should correct$/, async(paymentMethod) => {
 
 
 //sandrashipping
-Then(/^Total payment with (.+) shipping should correct$/, async(shippingMethod) => {
+Then(/^Total payment on breakdown price should correct$/, async() => {
     await browser.pause(3000);
     var nilaiSubtotalCart;
     const cartCustSubtotal = await CartPage.subtotalShippingCart.getText();
-    console.log("Doooorr! cartCustSubtotal= "+cartCustSubtotal);
+    const txtCostShip = await CheckoutPage.priceBreakdownShippingCost.getText();
     nilaiSubtotalCart = parseInt(cartCustSubtotal.replace(/[^\d]/g, ''), 10);
-    console.log(nilaiSubtotalCart);
-    console.log("Doooorr! nilaiSubtotalCart= "+nilaiSubtotalCart);
-    //console.log("Value subtotal on cart = " + numericValueCartSubtotal);
-    console.log("Shipping method yang digunakan " + shippingMethod);
-    if (shippingMethod == "SAP Regular") {
-        total = nilaiSubtotalCart+numericValueSAPRegCost;
-    } else if (shippingMethod == "SAP Express") {
-        total = nilaiSubtotalCart+numericValueSAPExpCost;
-    } else if (shippingMethod == "GO-SEND Instant") {
-        total = nilaiSubtotalCart+numericValueGOSENDInstantCost;
-    } else {
-        console.log("Shipping method tidak ada");
-    }
-    console.log("Doooorr! Total"+total);
+    nilaiCostBreakdownPrice = parseInt(txtCostShip.replace(/[^\d]/g, ''), 10);
+    console.log("Doooorr! nilaiSubtotalCart= "+nilaiSubtotalCart+" dan nilaiCostBreakdownPrice= "+nilaiCostBreakdownPrice);
+    total = nilaiSubtotalCart+nilaiCostBreakdownPrice;
     textTotal = "Rp " + total.toLocaleString();
     textTotal = textTotal.replace(',', '.');
     console.log("Doooorr! textTotal"+textTotal);
@@ -1063,21 +1213,15 @@ Then(/^(.+) shipping method should available in price breakdown$/, async(Shippin
 })
 
 Then(/^Shipping cost using SAP Regular should correct$/, async() => {
-    await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText("Rp 8.000");
+    let shippingCost = await CheckoutPage.shippingCostSapRegular.getText();
+    await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText(shippingCost);
 })
 
 //sandrashipping
 Then(/^Shipping cost (.+) on breakdown price should correct$/, async(breakdownShipping) => {
     //console.log("Shipping method yang digunakan" + breakdownShipping);
-    if(breakdownShipping == "SAP Regular") {
-        await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText("Rp 8.000");
-    } else if(breakdownShipping == "SAP Express") {
-        await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText("Rp 13.000");
-    } else if(breakdownShipping == "GO-SEND Instant") {
-        await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText("Rp 21.000");
-    } else {
-        console.log("Shipping method salah");
-    }
+    console.log("Shipping cost "+breakdownShipping+" pada list shipping method: "+txtShipCost);
+        await expect(CheckoutPage.priceBreakdownShippingCost).toHaveText(txtShipCost);
 })
 
 //sandrashipping
@@ -1109,7 +1253,8 @@ When(/^User select payment method Internet Banking$/, async() => {
 When(/^User click Pay now$/, async() => {
     const my_frame = await $("//iframe[@id='snap-midtrans']");
     browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//button[text()='Pay now']").click();
 //    browser.switchToParentFrame();
 })
@@ -1252,8 +1397,9 @@ When(/^User pay with BCA VA$/, async() => {
     await browser.pause(2000);
     await CartPage.clickBayar();
     const my_frame = await $("//iframe[@id='snap-midtrans']");
-    browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await browser.switchToFrame(my_frame);
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//div[@class='float-right clickable copy']").click();
     await browser.newWindow('https://simulator.sandbox.midtrans.com/bca/va/index');
     await browser.maximizeWindow();
@@ -1267,10 +1413,11 @@ When(/^User pay with BCA VA$/, async() => {
     await browser.switchToWindow(handles[0]);
     await browser.pause(1000);
     // const my_frame = await $("//iframe[@id='snap-midtrans']");
-    browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await browser.switchToFrame(my_frame);
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//button[@type='button']").click();
-    browser.switchToParentFrame();
+    await browser.switchToParentFrame();
     await browser.pause(2000);
     await expect(CheckoutPage.pageSuccessPayment).toBeDisplayed();
     await browser.pause(2000);
@@ -1290,10 +1437,11 @@ When(/^User pay with Octo$/, async() => {
     await expect(CheckoutPage.popupPayment).toBeDisplayed();
     await browser.pause(2000);
     const my_frame = await $("//iframe[@id='snap-midtrans']");
-    browser.switchToFrame(my_frame);
-    await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await browser.switchToFrame(my_frame);
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
     await $("//button[text()='Pay now']").click();
-    browser.switchToParentFrame();
+    await browser.switchToParentFrame();
     const handles = await browser.getWindowHandles();
     // await browser.switchToWindow(handles[1]);
     // await $("#inputMerchantId").click();
@@ -1308,3 +1456,30 @@ When(/^User pay with Octo$/, async() => {
     await expect(CheckoutPage.alertOctoSuccess).toHaveText('Transaksi Sukses');
     await CheckoutPage.clickOctoKembaliKeMerchant();
 })
+
+When(/^User click close icon$/, async() => {
+    await browser.pause(2000);
+//    await CheckoutPage.clickBackToMerchant();
+
+//    await $("//iframe[@id='snap-midtrans']").isDisplayed();
+//    const iframe = $("//iframe[@id='snap-midtrans']"); /* const variable named as iframe is created and
+//                                         iframe id is assigned to iframe
+//                                      */
+//    iframe.scrollIntoView();
+//    browser.switchToFrame(iframe);
+//    $("//button[@type='button']").click();
+//    browser.pause(3000);
+//    browser.switchToParentFrame();
+
+//    browser.waitForExist("//iframe[@id='snap-midtrans']");
+//    var my_frame = $("//iframe[@id='snap-midtrans']").value;
+//    browser.frame(my_frame);
+//    browser.$("#snap-midtrans").frame();
+    const my_frame = await $("//iframe[@id='snap-midtrans']");
+    await browser.switchToFrame(my_frame);
+    // await expect($("//body[@id='snap-body']")).toBeDisplayed();
+    await expect($("//div[@id='application']")).toBeDisplayed();
+    // await $("//button[@type='button']").click();
+    await $("//div[@class='close-snap-button clickable']").click();
+    await browser.switchToParentFrame();
+});

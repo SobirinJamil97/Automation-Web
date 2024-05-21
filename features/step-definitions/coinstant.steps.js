@@ -85,9 +85,11 @@ When(/^User click Copyqr$/, async () => {
     const qrCodeImage = await browser.$("(//img[@alt='qr-code'])[1]");
     qrCodeSrc = await qrCodeImage.getAttribute('src'); // Remove 'const' to assign the value to the global variable
     console.log('QR Code Text:', qrCodeSrc);
+    await browser.pause(5000);
 });
 
 When(/^User pay Midtrans instantpayment$/, async () => {
+    await browser.pause(5000);
     await browser.newWindow('https://simulator.sandbox.midtrans.com/qris/index');
     await browser.maximizeWindow();
     const handles = await browser.getWindowHandles();
@@ -146,22 +148,6 @@ try {
     console.error('Test failed:', error.message);
 }
 });
-
-// try {
-// // Locate the dynamic element using XPath
-//     const dynamicElement = driver.findElement(By.xpath("(//h5[normalize-space()='349990020240903559'])[1]"));
-//  // Get the text of the dynamic element
-//     const orderNumber = await dynamicElement.getText();
-// // Print the order number
-//         console.log('Order Number:', orderNumber);
-// // Assert that the order number is not empty
-//         assert.ok(orderNumber.length > 0, 'Order number is empty');
-//         console.log('Test passed: Order number is displayed successfully');
-//     } catch (error) {
-//         console.error('Test failed:', error.message);
-//     }
-
-// })
 
 //----------------- Co with point----------------------
 
@@ -243,15 +229,84 @@ Then(/^Teks voucher for you should available$/, async () => {
     await expect(CoInstantPage.txtvoucherforyou).toBeDisplayed();
 }); 
 
+// When(/^User input kode voucher$/, async () => {
+//     // const voucherCode = 'QA-Mils-FullFlower-51698649290000309-test120224A';
+//     // //const inputElement = await $(CoInstantPage.inputvoucher);
+//     // const inputElement = await $("//input[@placeholder='Masukkan kode voucher']");
+//     //  // Ensure the input element is present and visible before interacting with it
+//     // await inputElement.waitForDisplayed();
+//     //  // Set the value of the input element
+//     // await inputElement.setValue(voucherCode);
+//});
+
+
+// const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Daftar huruf abjad
+// //const startingCharacter = 'A'; // Huruf awal
+// When(/^User input kode voucher$/, async () => {
+
+
+//         const baseVoucherCode = 'QA-Mils-FullFlower-51698649290000309-test120224'; // Bagian tetap dari kode voucher
+//         const inputElement = await $("//input[@placeholder='Masukkan kode voucher']");
+        
+//         // Pastikan elemen input hadir dan terlihat sebelum berinteraksi dengannya
+//         await inputElement.waitForDisplayed();
+    
+//         // Dapatkan nilai dari elemen input
+//     const inputValue = await inputElement.getValue();
+//     const lastCharacter = inputValue[inputValue.length - 1]; // Ambil karakter terakhir
+
+//     let currentIndex = alphabet.indexOf(lastCharacter);
+//     let nextCharacter;
+
+//     // Jika karakter terakhir bukan huruf abjad, mulai dari awal
+//     if (currentIndex === -1) {
+//         nextCharacter = alphabet[0];
+//     } else {
+//         // Jika huruf terakhir adalah Z, kembali ke A, jika tidak, ambil huruf berikutnya
+//         nextCharacter = currentIndex === alphabet.length - 1 ? alphabet[0] : alphabet[currentIndex + 1];
+//     }
+
+//     const voucherCode = baseVoucherCode + nextCharacter;
+//     await inputElement.setValue(voucherCode);
+// });
+
+// Import modul node-localstorage
+const LocalStorage = require('node-localstorage').LocalStorage;
+// Lokasi penyimpanan lokal (bisa diatur sesuai kebutuhan Anda)
+const localStorage = new LocalStorage('./scratch');
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Daftar huruf abjad
+let lastUsedVoucher = localStorage.getItem('lastUsedVoucher'); // Mengambil kode voucher terakhir dari penyimpanan lokal
+
 When(/^User input kode voucher$/, async () => {
-    const voucherCode = 'QA-Mils-FullFlower-51698649290000309-test120224A';
-    //const inputElement = await $(CoInstantPage.inputvoucher);
+    const baseVoucherCode = 'QA-Mils-FullFlower-51698649290000309-test120224'; // Bagian tetap dari kode voucher
     const inputElement = await $("//input[@placeholder='Masukkan kode voucher']");
-     // Ensure the input element is present and visible before interacting with it
+    
+    // Pastikan elemen input hadir dan terlihat sebelum berinteraksi dengannya
     await inputElement.waitForDisplayed();
-     // Set the value of the input element
+
+    let nextCharacter;
+
+    if (!lastUsedVoucher) {
+        // Jika ini pertama kali penggunaan atau localStorage kosong, mulai dari A
+        nextCharacter = alphabet[0];
+    } else {
+        const lastCharacter = lastUsedVoucher[lastUsedVoucher.length - 1]; // Ambil karakter terakhir dari kode voucher terakhir yang digunakan
+
+        const currentIndex = alphabet.indexOf(lastCharacter);
+        // Jika huruf terakhir adalah Z, kembali ke A, jika tidak, ambil huruf berikutnya
+        nextCharacter = currentIndex === alphabet.length - 1 ? alphabet[0] : alphabet[currentIndex + 1];
+    }
+
+    const voucherCode = baseVoucherCode + nextCharacter;
+
+    // Simpan kode voucher yang digunakan ke dalam penyimpanan lokal
+    localStorage.setItem('lastUsedVoucher', voucherCode);
+
     await inputElement.setValue(voucherCode);
-    });
+});
+
+
 
 When(/^User click gunakan$/, async () => {
     await CoInstantPage.clickbtngunakan();
@@ -275,7 +330,14 @@ const element = await CoInstantPage.clickbtnvcr();
     });
 
 
-    When(/^user click cllose voucher list$/, async () => {
+    When(/^user click close voucher list$/, async () => {
         await CoInstantPage.clickclosevcr();
     });
-    //When 
+    //Then validate voucher applied
+    Then(/^validate voucher applied$/, async () => {
+        await expect(CoInstantPage.txtcashvoucher).toBeDisplayed();
+    });
+
+    Then(/^validate value voucher$/, async () => {
+        await expect(CoInstantPage.valuevoucher).toHaveText("-Rp 50.000");
+    });

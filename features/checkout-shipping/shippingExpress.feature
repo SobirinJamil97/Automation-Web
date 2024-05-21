@@ -3,23 +3,32 @@ Feature: Checkout-shipping
 
     @TEST-6478 @POSITIVE
     Scenario: Choose Express Shipping Method
-        Given User has logged in
-        Then Username should available
+        Given User <email> has logged in and in homepage
         Then User cart should empty
-        When User search and add product Argan Hand Balm 30ml to cart
-        Then Cart badge should available
-        When User click shopping cart button
-        Then Shopping cart page should available
-        Then Qty should 1
-        When User click Bayar
+        When User search and add product <produk> to cart
+        When User go to cart and continue to shipping page
         When User click address list box
-        When User select address name Rumah Sendiri
-        When User select shipping method SAP Express
-        Then SAP Express shipping method should appeared on breakdown price
-        Then Shipping cost SAP Express on breakdown price should correct
-        Then Total payment with SAP Express shipping should correct
+        When User select address name <namaAlamat>
+        Then Section with Pengiriman Express label should available
+        Then <shippingMethod> should available on shipping method section
+        When User select <shippingMethod> shipping method
+        Then <shippingMethod> shipping method should appeared on breakdown price
+        Then Shipping cost <shippingMethod> on breakdown price should correct
+        Then Total payment on breakdown price should correct
+        When User click Bayar
+        When User select payment method VA BCA
+        Then Total payment on breakdown price should correct
+        When User pay with BCA VA
+        When User click Cek Status Pesanan
+        Then Transaction detail page should open
+        Then Shipping name <shippingMethod> and shipping detail in transaction detail should be correct
+        # Then Shipping method in detail transaction is <shippingMethod>
+        # Then Shipping address name is <namaLengkap> in detail transaction
+        # Then Shipping address phone number is <nomorPonsel> in detail transaction
+        # Then Shipping address full address is <alamatLengkap> in detail transaction
 
 
         Examples:
-        | email | otp             |
-        | testerauto0707@test.com | 123321 |
+        | email | produk | namaAlamat | shippingMethod | namaLengkap | nomorPonsel | alamatLengkap                                                                            | 
+        | testerauto114044@test.com | Almond | Automation Edit | SAP Express | Automation Edit | 6280000000444 | Jl. Arteri Pd. Indah, Kby. Lama Utara, Kec. Kby. Lama, Kota Jakarta Selatan Kebayoran Lama, DKI Jakarta, Jakarta Selatan |  
+        

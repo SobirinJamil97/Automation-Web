@@ -2,7 +2,7 @@ Feature: Checkout - Payment
 
 @test-6474
   Scenario: Checkout with voucher + Donation + catalog rule + cart rule combination
-    Given User 1017 has logged in
+    Given User testerauto1017@mailinator.com has logged in
     Then User cart should empty
     When User click Search button
     When User search product 101060431

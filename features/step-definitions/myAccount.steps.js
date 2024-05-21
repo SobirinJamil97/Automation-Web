@@ -90,3 +90,11 @@ Then(/^Menu Change Email should available$/, async () => {
 Then(/^Menu Change Phone Number should available$/, async () => {
     await expect(MyAccountPage.menuChangePhoneNumber).toBeDisplayed();
 })
+
+When(/^User click My Transaction$/, async () => {
+    await MyAccountPage.clickMyTransaction();
+});
+
+When(/^User click My Vouchers$/, async () => {
+    await MyAccountPage.clickMyVouchers();
+});

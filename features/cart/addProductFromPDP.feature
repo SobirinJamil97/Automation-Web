@@ -2,7 +2,7 @@ Feature: Cart
 
 @test-6565
     Scenario: Add product to cart from PDP
-        Given User 1017 has logged in
+        Given User testerautostag1@mailinator.com has logged in
         Then User cart should empty
         When User click Search button
         When User search product 145510039

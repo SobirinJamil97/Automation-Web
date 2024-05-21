@@ -7,7 +7,8 @@ class CheckoutPage extends Page{
 
     get radioSAPRegular(){
 //        return $("(//label[@class='MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd mui-style-1bqce4r'])[1]");
-        return $("(//p[normalize-space()='SAP Regular'])[1]");
+        //return $("(//p[normalize-space()='SAP Regular'])[1]");
+        return $("(//p[text()='SAP Regular'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     get tabVirtualAccount(){
@@ -187,7 +188,8 @@ class CheckoutPage extends Page{
     }
 
     get btnYesImSure() {
-        return $("/html[1]/body[1]/div[4]/div[3]/div[1]/div[1]/button[1]");
+        //return $("/html[1]/body[1]/div[4]/div[3]/div[1]/div[1]/button[1]");
+        return $("//h3[normalize-space()='Confirm Cancel']/following-sibling::button[1]");
     }
 
     get helperTextDari() {
@@ -236,12 +238,13 @@ class CheckoutPage extends Page{
 
     //sandra
     get clearFieldKecamatan() {
-        return $("(//div[@class='MuiAutocomplete-endAdornment mui-style-2iz2x6'])[1]");
+        return $("(//button[@title='Clear'])[1]");
     }
 
     //sandra
-    get clearFieldButton() {
-        return $("//button[@title='Clear']");
+    get clearFieldTitikLokasi() {
+        return $("(//button[@title='Clear'])[2]");
+        
     }
 
 
@@ -277,8 +280,18 @@ class CheckoutPage extends Page{
     }
 
     //sandra
+    get inputTitikLokasiFront() {
+        return $("//input[@id='pinpointAddress']");
+    }
+
+    //sandra
     get buttonAturTitikLokasi() {
         return $("//button[normalize-space()='Atur']");
+    }
+
+    //sandra
+    get buttonUbahTitikLokasi() {
+        return $("//button[normalize-space()='Ubah']");
     }
 
     //sandra
@@ -328,13 +341,19 @@ class CheckoutPage extends Page{
         return $("(//button[@type='button'])[6]");
     }
 
+    get btnCloseFormUbahAlamat() {
+        return $("//h2[normalize-space()='Ubah Alamat']/button");
+    }
+
+
     get opsiKecamatan() {
         return $("//input[@aria-controls='free-solo-2-demo-listbox']");
     }
 
     get opsiKecamatan2() {
 //        return $("//input[@aria-activedescendant='free-solo-2-demo-option-0']");
-        return $("//div[@class='MuiAutocomplete-popper mui-style-1le80r3']");
+        //return $("//div[@class='MuiAutocomplete-popper mui-style-1le80r3']");
+        return $("(//div[@role='presentation'])[3]");
     }
 
     get opsiKodePos() {
@@ -403,6 +422,41 @@ class CheckoutPage extends Page{
 
     get labelPengirimanExpress() {
         return $("//p[normalize-space()='Pengiriman Express']");
+    }   
+    
+    //sandra
+    get labelPengirimanInstant() {
+        return $("//p[normalize-space()='Instant']");
+    }
+
+    //sandra element param
+    get labelTitleMethod() {
+        return $("//p[normalize-space()='"+tempLabelMethod+"']");
+    }
+
+    //sandra element param
+    get labelShippingMethodList() {
+        return $("//p[normalize-space()='"+tempShipMethod+"']");
+    }
+    
+    //sandra element param
+    get imgShippingMethodList() {
+        return $("//img[@alt='"+tempShipMethod+"']");
+    }
+    
+    //sandra element param
+    get estimationDayShippingMethod() {
+        return $("(//p[text()='"+tempShipMethod+"'])/following-sibling::span");
+    }
+
+    //sandra element param
+    get costShippingMethod() {
+        return $("(//p[text()='"+tempShipMethod+"'])/parent::div/parent::div/following-sibling::h5");
+    }
+
+    //sandra element param
+    get radioBtnShippingMethod() {
+        return $("(//p[text()='"+tempShipMethod+"'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     get imgSapRegular() {
@@ -414,11 +468,13 @@ class CheckoutPage extends Page{
     }
 
     get estimationDaySapRegular() {
-        return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/label[1]/span[2]/div[1]/div[1]/div[1]/span[1]");
+        //return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/label[1]/span[2]/div[1]/div[1]/div[1]/span[1]");
+        return $("(//p[text()='SAP Regular'])/following-sibling::span");
     }
 
     get shippingCostSapRegular() {
-        return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/label[1]/span[2]/div[1]/h5[1]");
+        //return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/label[1]/span[2]/div[1]/h5[1]");
+        return $("(//p[text()='SAP Regular'])/parent::div/parent::div/following-sibling::h5");
     }
 
     get shippingCostSiCepatRegular() {
@@ -435,17 +491,51 @@ return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[
     }
 
     get estimationDaySapExpress() {
-        return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/label[1]/span[2]/div[1]/div[1]/div[1]/span[1]");
+        //return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/label[1]/span[2]/div[1]/div[1]/div[1]/span[1]");
+        return $("(//p[text()='SAP Express'])/following-sibling::span");
     }
 
     get shippingCostSapExpress() {
-        return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/label[1]/span[2]/div[1]/h5[1]");
+        //return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[2]/div[1]/label[1]/span[2]/div[1]/h5[1]");
+        return $("(//p[text()='SAP Express'])/parent::div/parent::div/following-sibling::h5");
     }
 
     //sandrashipping
     get shippingCostGOSENDInstant() {
-        return $("//img[@alt='GO-SEND Instant']/parent::div/following-sibling::h5");
+        return $("(//p[text()='GO-SEND Instant'])/parent::div/parent::div/following-sibling::h5");
     }
+
+    //sandra
+    get imgGOSENDInstant() {
+        return $("//img[@alt='GO-SEND Instant']");
+    }
+
+    //sandra
+    get labelGOSENDInstant() {
+        return $("//p[normalize-space()='GO-SEND Instant']");
+    }
+
+    //sandra
+    get estimationDayGOSENDInstant() {
+        return $("(//p[text()='GO-SEND Instant'])/following-sibling::span");
+    }
+
+
+    //sandra
+    get labelTitikLokasiGOSEND() {
+        return $("//h5[normalize-space()='Titik Lokasi untuk GO-SEND']");
+    }
+
+    //sandra
+    get addressTitikLokasiGOSEND() {
+        return $("//h5[normalize-space()='Titik Lokasi untuk GO-SEND']/parent::div/following-sibling::div/p[1]");
+    }
+
+    //sandra
+    get pesanTitikLokasiGOSEND() {
+        return $("//h5[normalize-space()='Titik Lokasi untuk GO-SEND']/parent::div/following-sibling::div/p[3]");
+    }
+
 
     get appliedShippingMethod() {
         return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-zfwc1c'])[1]");
@@ -458,20 +548,28 @@ return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[
     }
 
     get radioJNERegular() {
-        return $("(//p[normalize-space()='JNE Regular'])[1]");
+        //return $("(//p[normalize-space()='JNE Regular'])[1]");
+        return $("(//p[text()='JNE Regular'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     get radioSiCepatRegular() {
-        return $("(//p[normalize-space()='SiCepat Regular'])[1]");
+        //return $("(//p[normalize-space()='SiCepat Regular'])[1]");
+        return $("(//p[text()='SiCepat Regular'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     get radioSAPExpress() {
-        return $("(//p[@class='MuiTypography-root MuiTypography-body2 mui-style-1chmyew'][normalize-space()='SAP Express'])[1]");
+        //return $("(//p[@class='MuiTypography-root MuiTypography-body2 mui-style-1chmyew'][normalize-space()='SAP Express'])[1]");
+        return $("(//p[text()='SAP Express'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
+    }
+
+    //sandra
+    get radioGOSENDInstant() {
+        return $("(//p[text()='GO-SEND Instant'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     //sandrashipping
     get radioGOSENDInstant(){
-        return $("//p[text()='Instant']/following-sibling::div/label/span");
+        return $("(//p[text()='GO-SEND Instant'])/parent::div/parent::div/parent::div/parent::span/preceding-sibling::span");
     }
 
     get labelVoucher() {
@@ -932,6 +1030,10 @@ return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[
     }
 
 
+    //sandra click param
+    async clickRadioBtnShipMethod(){
+        await this.radioBtnShippingMethod.click();
+    }
 
     async clickRadioSAPRegular(){
         await this.radioSAPRegular.click();
@@ -1099,8 +1201,7 @@ return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[
 
     //Sandra
     async clickClearKecamatan() {
-    //    await this.inputFieldKecamatan.clearValue();
-        await this.clearFieldButton.click();
+        await this.clearFieldKecamatan.click();
     }
 
     //sandra
@@ -1134,13 +1235,23 @@ return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[
     }
 
     //sandra
+    async clickUbahTitikLokasi() {
+        await this.buttonUbahTitikLokasi.click();
+    }
+
+    //sandra
+    async clickTitikLokasiFront() {
+        await this.inputTitikLokasiFront.click();
+    }
+
+    //sandra
     async typeTitikLokasi(titikLokasi) {
         await this.inputTitikLokasi.setValue(titikLokasi);
     }
 
     //sandra
     async clickClearTitikLokasi() {
-        await this.clearFieldButton.click();
+        await this.clearFieldTitikLokasi.click();
     }
 
     //sandra

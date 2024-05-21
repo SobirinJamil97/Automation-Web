@@ -3,7 +3,10 @@ Feature: Checkout-shipping
 
     @TEST-6475 @POSITIVE
     Scenario: Change selected address
-        Given User has logged in and on shipping page
+        Given User <email> has logged in and in homepage
+        Then User cart should empty
+        When User search and add product Aloe to cart
+        When User go to cart and continue to shipping page
         When User click address list box
         When User select address name Rumah Sendiri
         Then Selected shipping address is Rumah Sendiri
@@ -14,5 +17,5 @@ Feature: Checkout-shipping
 
 
         Examples:
-        | email | otp             |
-        | testerauto0707@test.com | 123321 |
+        | email |
+        | testerauto0707@test.com |
