@@ -2,7 +2,7 @@ Feature: Checkout - Payment
 
 @test-6465
   Scenario: Checkout with Internet Banking 
-    Given User 1017 has logged in
+    Given User testerautostag24@mailinator.com has logged in
     Then User cart should empty
     When User click Search button
     When User search product Hair Slides

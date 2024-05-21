@@ -16,7 +16,7 @@ const pages = {
 }
 
 
-//positive
+//========positive==========
 //change profile (postive)
 When(/^User click change profile button$/, async () => {
     await ProfilePage.clickChgProfile();
@@ -40,39 +40,58 @@ Then(/^Change profile page open$/, async () => {
     await browser.pause(2000)
 });
 
-
-When(/^User edit first name$/, async () => {
+//sandra new edit
+When(/^User edit first name (.+)$/, async (userGender) => {
+    tmpGdrFirst = userGender;
     await ProfilePage.clearFirstName();
     await ProfilePage.typeFirstName();
     tempFirstName = await ProfilePage.getFirstName();
+    console.log(tempFirstName);
 });
 
 
-When(/^User edit last name$/, async () => {
+When(/^User edit last name (.+)$/, async (userGender) => {
+    tmpGdrLast = userGender;
     await ProfilePage.clearLastName();
     await ProfilePage.typeLastName();
     tempLastName = await ProfilePage.getLastName();
+    console.log(tempLastName);
 });
 
 
-When(/^User edit gender to male$/, async () => {
-    tempSvgChecked = await ProfilePage.getSvgChecked();
-    tempSvgNotChecked = await ProfilePage.getSvgNotChecked();
-    await ProfilePage.selectMale();
+
+//sandra new edit
+When(/^User edit gender to (.+)$/, async (userGender) => {
+    tempGender = userGender;
+    await ProfilePage.selectGenderProfile();
+    await browser.pause(2000);
+    //tempClassRadioChecked = await ProfilePage.getRadioCheckedClass();
+    tempClassRadioChecked = await ProfilePage.radioBtnGender.getAttribute('class');
+    console.log("Isi dari tempClassRadioChecked = "+tempClassRadioChecked);
 });
 
-When(/^User edit gender to female$/, async () => {
-    tempSvgChecked = await ProfilePage.getSvgChecked();
-    tempSvgNotChecked = await ProfilePage.getSvgNotChecked();
-    await ProfilePage.selectFemale();
-});
+
+// When(/^User edit gender to male$/, async () => {
+//     tempSvgChecked = await ProfilePage.getSvgChecked();
+//     tempSvgNotChecked = await ProfilePage.getSvgNotChecked();
+//     await ProfilePage.selectMale();
+// });
+
+// When(/^User edit gender to female$/, async () => {
+//     tempSvgChecked = await ProfilePage.getSvgChecked();
+//     tempSvgNotChecked = await ProfilePage.getSvgNotChecked();
+//     await ProfilePage.selectFemale();
+// });
 
 
 
 When(/^User edit DOB$/, async () => {
-    await ProfilePage.typeDateDOB();
-    await ProfilePage.typeMonthDOB();
-    await ProfilePage.typeYearDOB();
+    // await ProfilePage.typeDateDOB();
+    // await browser.pause(1000);
+    // await ProfilePage.typeMonthDOB();
+    // await browser.pause(1000);
+    // await ProfilePage.typeYearDOB();
+    await ProfilePage.typeDatebirth();
     tempDOB = await ProfilePage.getDOB();
 });
 
@@ -92,8 +111,12 @@ Then(/^User name on greeting change$/, async () => {
 });
 
 
-Then(/^User gender changed on My Account (.+)$/, async (gender) => {
-    await expect(ProfilePage.myAccountGender).toHaveText(gender);
+Then(/^User gender changed to (.+) on My Account$/, async (gender) => {
+    if (gender == "F") {
+        await expect(ProfilePage.myAccountGender).toHaveText("Perempuan");
+    } else {
+        await expect(ProfilePage.myAccountGender).toHaveText("Laki-Laki");
+    }
  });
 
 
@@ -113,6 +136,13 @@ Then(/^User DOB has changed$/, async () => {
     await expect(ProfilePage.fieldDOB).toHaveValue(tempDOB);
 });
 
+//sandra new edit
+Then(/^User gender changed to (.+) on profile$/, async (userGender) => {
+    tempGender = userGender;
+    await browser.pause(1000);
+    await expect(ProfilePage.radioBtnGender).toHaveAttribute('class', tempClassRadioChecked);
+    console.log("Isi dari tempClassRadioChecked = "+tempClassRadioChecked);
+});
 
 Then(/^User gender changed to male$/, async () => {
     await browser.pause(1000);
@@ -207,7 +237,31 @@ Then(/^User email has changed on My Account (.+)$/, async (newEmail) => {
 });
 
 
-//negative
+//========negative==========
+When(/^User edit invalid first name (.+)$/, async (invalidFirstName) => {
+    tempInvalidFirstName = invalidFirstName;
+    await ProfilePage.typeInvalidFirstName();
+    await browser.pause(1000);
+});
+
+When(/^User edit invalid last name (.+)$/, async (invalidLastName) => {
+    tempInvalidLastName = invalidLastName;
+    await ProfilePage.typeInvalidLastName();
+    await browser.pause(1000);
+});
+
+When(/^User empty first name$/, async () => {
+    await ProfilePage.clearFirstName();
+});
+
+When(/^User empty last name$/, async () => {
+    await ProfilePage.clearLastName();
+});
+
+When(/^User empty DOB$/, async () => {
+    await ProfilePage.clearDOB();
+});
+
 //change profile (negative)
 Then(/^Change profile page open and get data$/, async () => {
     await expect(ProfilePage.titleChgProfile).toBeDisplayed();
@@ -251,6 +305,26 @@ Then(/^User DOB not changed$/, async () => {
     await browser.pause(1000);
     await expect(ProfilePage.fieldDOB).toHaveValue(tempDOBBefore);
 });
+
+Then(/^Error message field required appeared$/, async() => {
+    await expect(ProfilePage.helperTextFirstName).toHaveText("First Name is required");
+    await expect(ProfilePage.helperTextLastName).toHaveText("Last Name is required");
+    await expect(ProfilePage.helperTextDOB).toHaveText("Date of Birth is required");
+    await browser.pause(2000);
+})
+
+Then(/^Error message characters length appeared$/, async() => {
+    await expect(ProfilePage.helperTextFirstName).toHaveText("First Name can not be less than 3 characters");
+    await expect(ProfilePage.helperTextLastName).toHaveText("Last Name can not be less than 3 characters");
+    await browser.pause(2000);
+})
+
+Then(/^Error message field cannot have special characters appeared$/, async() => {
+    await expect(ProfilePage.helperTextFirstName).toHaveText("First Name can not have special character(s)");
+    await expect(ProfilePage.helperTextLastName).toHaveText("Last Name can not have special character(s)");
+    await browser.pause(2000);
+})
+
 
 //change phone number (negative)
 Then(/^Change Phone Number page open and get data$/, async () => {

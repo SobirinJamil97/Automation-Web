@@ -4,6 +4,8 @@ const { browser, expect, $ } = require('@wdio/globals')
 const LoginPage = require('../pageobjects/login.page');
 const SecurePage = require('../pageobjects/secure.page');
 const HomePage = require('../pageobjects/home.page');
+const ProfilePage = require('../pageobjects/profile.page');
+const profilePage = require('../pageobjects/profile.page');
 
 const pages = {
     login: LoginPage
@@ -67,3 +69,24 @@ Then(/^User name should appear$/, async () => {
 When(/^User click profile$/, async () => {
     await LoginPage.clickProfile()
 });
+
+Then(/^User should redirected to register form$/, async() => {
+    await browser.pause(3000);
+    const regUrl = await browser.getUrl();
+    await expect(regUrl).toBe('https://web.staging-v1.tbsgroup.co.id/register');
+    await expect(LoginPage.registerForm).toBeDisplayed();
+})
+
+Then(/^Login form error message should appear (.+)$/, async(errMessage) => {
+    await expect(LoginPage.loginErrorMessage).toHaveText(errMessage);
+})
+
+Then(/^Phone number field should disabled$/, async() => {
+    console.log(profilePage.fieldPhoneNumber.getValue());
+    // await expect(ProfilePage.fieldPhoneNumber).toHaveValue('+62 80000010000');
+    await expect(ProfilePage.fieldPhoneNumber).toBeDisabled();
+});
+
+Then(/^Email field should disabled$/, async() => {
+    await expect(ProfilePage.fieldEmailReg).toBeDisabled();
+})

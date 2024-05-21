@@ -2,7 +2,7 @@ Feature: Checkout - Payment
 
 @test-6470
   Scenario: Checkout with cat. Rule only discount
-    Given User 1017 has logged in
+    Given User testerautostag21@mailinator.com has logged in
     Then User cart should empty
     When User click Search button
     When User search product 155060108

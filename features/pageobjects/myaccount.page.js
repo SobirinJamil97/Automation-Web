@@ -88,6 +88,15 @@ class MyAccount extends Page{
         await this.btnConfirmLogout.click()
     }
 
+    
+    async clickMyTransaction(){
+        await this.menuMyTransactions.click();
+    }
+
+    async clickMyVouchers(){
+        await this.menuMyVouchers.click();
+    }
+
     open () {
         return super.open();
     }

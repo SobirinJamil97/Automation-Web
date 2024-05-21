@@ -25,40 +25,49 @@ Then(/^Shopping cart page should available$/, async () => {
 //    int_cartSubtotal = parseInt(nominal_cartSubtotal, 10);
 });
 
-Then(/^Qty should 1$/, async () => {
-//    q = await CartPage.inputQty.getValue();
-//    await expect(q).toEqual(qty);
-    await expect(CartPage.inputQty1).toBeDisplayed();
-});
+// Then(/^Qty should 1$/, async () => {
+// //    q = await CartPage.inputQty.getValue();
+// //    await expect(q).toEqual(qty);
+//     await browser.pause(1000);
+//     await expect(CartPage.inputQty1).toBeDisplayed();
+//     await browser.pause(1000);
+// });
 
 When(/^User click plus button$/, async () => {
     await CartPage.clickPlus();
 });
 
-Then(/^Qty should 2$/, async () => {
-    await expect(CartPage.inputQty2).toBeDisplayed();
-});
+// Then(/^Qty should 2$/, async () => {
+//     await browser.pause(1000);
+//     await expect(CartPage.inputQty2).toBeDisplayed();
+//     await browser.pause(1000);
+// });
 
 When(/^User click min button$/, async () => {
     await CartPage.clickMin();
 })
 
-When(/^User input value 2$/, async () => {
-    await CartPage.typeQty2();
-});
+// When(/^User input value 2$/, async () => {
+//     await CartPage.typeQty2();
+// });
 
-When(/^User input value 1$/, async () => {
-    await CartPage.typeQty1();
-});
+// When(/^User input value 3$/, async () => {
+//     await CartPage.typeQty3();
+// });
 
-When(/^User input value 11$/, async () => {
-    await CartPage.typeQty11();
-});
+// When(/^User input value 1$/, async () => {
+//     await CartPage.typeQty1();
+// });
 
-Then(/^Qty should 10$/, async () => {
-    await expect(CartPage.inputQty10).toBeDisplayed();
-    await browser.pause(2000);
-});
+// When(/^User input value 11$/, async () => {
+//     await CartPage.typeQty11();
+// });
+
+// Then(/^Qty should 10$/, async () => {
+//     await browser.pause(1000);
+//     await expect(CartPage.inputQty10).toBeDisplayed();
+//     await browser.pause(2000);
+// });
 
 When(/^User click trash icon$/, async() => {
     await CartPage.clickTrashIcon();
@@ -334,12 +343,108 @@ Then(/^Cart should contain (.+) product$/, async(qty) => {
     await expect(CartPage.cartJumlahProduk).toHaveText("Isi: "+qty+" Produk");
 })
 
-Then(/^Product ARBER EAU DE TOILETTE 100ML should available in cart$/, async() => {
-    await expect(CartPage.arberProduct).toBeDisplayed();
-    await expect(CartPage.arberProduct).toHaveText("ARBER EAU DE TOILETTE 100ML");
+// Then(/^Product ARBER EAU DE TOILETTE 100ML should available in cart$/, async() => {
+//     await expect(CartPage.arberProduct).toBeDisplayed();
+//     await expect(CartPage.arberProduct).toHaveText("ARBER EAU DE TOILETTE 100ML");
+// })
+
+Then(/^Product (.+) should available in cart$/, async(ProductNameInCart) => {
+    // await expect(CartPage.advanceSetProduct).toBeDisplayed();
+    // await expect(CartPage.advanceSetProduct).toHaveText("ADVANCE SET");
+    cartProductName = ProductNameInCart;
+    await expect(CartPage.cartProductName).toBeDisplayed();
+    await expect(CartPage.cartProductName).toHaveText(ProductNameInCart);
 })
 
-Then(/^Product ADVANCE SET should available in cart$/, async() => {
-    await expect(CartPage.advanceSetProduct).toBeDisplayed();
-    await expect(CartPage.advanceSetProduct).toHaveText("ADVANCE SET");
+// Then(/^Qty should 3$/, async () => {
+//     await browser.pause(1000);
+//     await expect(CartPage.inputQty3).toBeDisplayed();
+//     await browser.pause(1000);
+// });
+
+Then(/^Qty should (.+)$/, async(valu) => {
+    await browser.pause(1500);
+    await expect(CartPage.inputQty).toHaveValue(valu);
+    await browser.pause(1000);
+});
+
+When(/^User input value (.+)$/, async (val) => {
+    await CartPage.typeQty(val);
+});
+
+Then(/^Plus button should disabled$/, async () => {
+    const button = CartPage.btnPlus;
+    // button.waitForEnabled({ reverse: true });
+    // await expect(button.isEnabled()).toBe(false);
+    // browser.pause(100); 
+    // expect(button.getAttribute('disabled')).toBe('true');
+    await expect(CartPage.buttonPlus).toHaveAttr('disabled');
+    // await expect(CartPage.btnPlus).toBeDisabled();
+    // const isDisabled = await CartPage.buttonPlus.getAttribute('disabled');
+    // expect(isDisabled).to.be.true;
+})
+
+Then(/^Label subtotal should available$/, async() => {
+    await expect(CartPage.labelSubtotal).toBeDisplayed();
+})
+
+Then(/^Subtotal amount should available$/, async() => {
+    await expect(CartPage.subtotalOnCart).toBeDisplayed();
+    let productPriceSubtotal = await CartPage.subtotalProductPrice.getText();
+    await expect(CartPage.subtotalOnCart).toHaveText(productPriceSubtotal);
+})
+
+Then(/^Label Total should available$/, async() => {
+    await expect(CartPage.labelTotal).toBeDisplayed();
+})
+
+Then(/^Total amount without promo should available$/, async() => {
+    await expect(CartPage.cartTotalAmount).toBeDisplayed();
+    let cartSubtotal = await CartPage.subtotalOnCart.getText();
+    await expect(CartPage.cartTotalAmount).toHaveText(cartSubtotal);
+})
+
+Then(/^Total amount with promo should available$/, async() => {
+    const cartSubtotal = await CartPage.subtotalOnCart.getText();
+    let valueCartSubtotal = parseInt(cartSubtotal.replace(/[^\d]/g, ''), 10);
+    console.log(numericValueCartSubtotal); 
+    let valuePromo = valueCartSubtotal*(15/100);
+    let total = valueCartSubtotal-valuePromo;
+    let stringTotal = "Rp " + total.toLocaleString().replace(',', '.');
+    expect(CartPage.cartTotalAmount).toHaveText(stringTotal);
+})
+
+When(/^User click product image in cart$/, async() => {
+    // await CartPage.clickImgAdvanceSetProduct();
+    await CartPage.clickcartImgProduct();
+})
+
+Then(/^User should redirected to PDP (.+)$/, async(prodName) => {
+    await expect(PdpPage.pdpBreadcrumbs).toBeDisplayed();
+    await expect(PdpPage.pdpBreadcrumbs).toHaveText(prodName);
+})
+
+When(/^User click on product name in cart$/, async() => {
+    await CartPage.clickcartProductName();
+})
+
+Then(/^Catalog rule tag product (.+) should (.+)$/, async(productName,catalogTag) => {
+    catalogProduct = productName;
+    catalogTag = catalogTag;
+    await expect(CartPage.catalogPromoTag).toBeDisplayed();
+    await expect(CartPage.catalogPromoTag).toHaveText(catalogTag);
+})
+
+Then(/^Catalog rule price product (.+) should correct$/, async(productName) => {
+    catalogProduct = productName;
+    await expect(CartPage.cartOriginalPrice).toBeDisplayed();
+    originalPrice = await CartPage.cartOriginalPrice.getText();
+    numericValueOriginalPrice = parseInt(originalPrice.replace(/[^\d]/g, ''), 10);
+    numericOriginalPrice = numericValueOriginalPrice;
+    console.log(numericOriginalPrice);
+    catalogPrice = numericOriginalPrice-20000;
+    console.log(catalogPrice);
+    stringCatalogPrice = "Rp " + catalogPrice.toLocaleString();
+    stringCatalogPrice = stringCatalogPrice.replace(',', '.');
+    expect(CartPage.cartCatalogPrice).toHaveText(stringCatalogPrice);
 })

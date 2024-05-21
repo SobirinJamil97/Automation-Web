@@ -7,6 +7,7 @@ class SearchPage extends Page{
 
 get btnSearch () {
         return $("(//*[name()='svg'][@class='MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-style-1u07pm0'])[4]")
+// return $("//a[@href='/search'][1]")
 }
 
 get txtSearch () {
@@ -26,10 +27,6 @@ get ResultSearchClick () {
         return $("(//img[@alt='Bath Lily Large Ramie'])[1]")
 }
 
-//  get searchResultElements() {
-//    return $$('.search-result');
-//  }
-
 get iconhome () {
         return $("(//img)[2]")
 }
@@ -46,9 +43,28 @@ get ResultSearchInvalidSKU () {
         return $("(//p[@class='MuiTypography-root MuiTypography-body1 mui-style-zfwc1c'])[1]")
 }
 
-//ResultSearchInvalidSKU
+get  skuinpdp () {
+        return $("//p[text()='SKU #190180390']")
+}
 
+get  img1PDP () {
+        return $("//img[contains(@src, '126490021_1.jpg')]")   
+        // return $("(//img[contains(@src, '126490021_1.jpg')])[2]")
+        // return $("//img[@alt='product-gallery-images']")
+}
+get  titlePDP () {
+        //return $("//h2[normalize-space()='Blue Musk Fragrance Mist 100ml']") 
+        return $("//h2[text()='Blue Musk Fragrance Mist 100ml']")   
+}
 
+get summarydescriptionPDP(){
+        return $("//div[contains(text(),'Tunjukkan keunggulanmu dengan Blue Musk Fragrance ')]")   
+}
+
+get pricePDP(){
+        return $("//h3[normalize-space()='Rp 249.000']")  
+}
+//("//h3[normalize-space()='Rp 249.000']")
 
 //---------Pemisah get dan async-----------------
 
@@ -92,9 +108,6 @@ async clickresultSearch(){
              await this.ResultSearchClick.click();
          }
 
-// async getResultSearchElements() {
-//    return this.searchResultElements;
-//  }
 
  async ClickSKU() {
     await this.ResultSearchSKU.click();

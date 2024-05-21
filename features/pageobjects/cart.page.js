@@ -30,6 +30,10 @@ class CartPage extends Page{
         return $("//input[@value='2']");
     }
 
+    get inputQty3(){
+        return $("//input[@value='3']");
+    }    
+
     get inputQty10(){
         return $("//input[@value='10']");
     }
@@ -81,9 +85,17 @@ class CartPage extends Page{
         return $("//h5[text()='GINGER CONDITIONER 250ML']/parent::a/parent::div/following-sibling::div[3]/div[1]");
     }
 
+    get cartOriginalPrice() {
+        return $("//h5[text()='"+catalogProduct+"']/parent::a/parent::div/following-sibling::div[3]/div[1]");
+    }
+
     get cartHargaCatalog() {
         // return $("/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[3]");
         return $("//h5[text()='GINGER CONDITIONER 250ML']/parent::a/parent::div/following-sibling::div[2]");
+    }
+
+    get cartCatalogPrice() {
+        return $("//h5[text()='"+catalogProduct+"']/parent::a/parent::div/following-sibling::div[2]");
     }
 
     get labelPromoCart() {
@@ -181,6 +193,10 @@ class CartPage extends Page{
         return $("//h5[text()='GINGER CONDITIONER 250ML']/parent::a/parent::div/following-sibling::div//div[contains(text(), '(Test QA) Diskon exclude Mobile Apps 20RB')]");
     }
 
+    get catalogPromoTag() {
+        return $("//h5[text()='GINGER CONDITIONER 250ML']/parent::a/parent::div/following-sibling::div[1]/div")
+    }
+
     get cartRulePromoTagBanana() {
         return $("//h5[text()='BANANA CONDITIONER 250ML']/parent::a/parent::div/following-sibling::div[1]//div[contains(text(), 'Disc 15%')]");
     }
@@ -209,15 +225,55 @@ class CartPage extends Page{
         return $("//h5[normalize-space()='ADVANCE SET']");
     }
 
+    get cartProductName() {
+        return $("//h5[normalize-space()='"+cartProductName+"']");
+    }
+
+    get inputQty() {
+        return $("//input[@type='number']");
+    }
+
+    get buttonPlus() {
+        return $("//input[@type='number']/parent::div/following-sibling::button");
+    }
+
+    get buttonMin() {
+        return $("//input[@type='number']/parent::div/preceding-sibling::button");
+    }
+
+    get labelSubtotal() {
+        return $("//h5[text()='Subtotal']");
+    }
+
+    get subtotalProductPrice() {
+        return $("//input[@type='number']/parent::div/parent::div/parent::div/parent::div/following-sibling::div//h4");
+    }
+
+    get labelTotal() {
+        return $("//h4[text()='Total']");
+    }
+
+    get cartTotalAmount() {
+        return $("//h4[text()='Total']/following-sibling::h4");
+    }
+
+    get imgAdvanceSetProduct() {
+        return $("//a[contains(@href,'/advance-set-950')]//img");
+    }
     
+    get cartImgProduct() {
+        return $("//h5[text()='"+cartProductName+"']/parent::a/parent::div/parent::div/preceding-sibling::a/div/div/div/img");
+    }
 
 
     async clickPlus(){
-        await this.btnPlus.click();
+        // await this.btnPlus.click();
+        await this.buttonPlus.click();
     }
 
     async clickMin(){
-        await this.btnMin.click();
+        // await this.btnMin.click();
+        await this.buttonMin.click();
     }
 
     async typeQty2(){
@@ -227,6 +283,16 @@ class CartPage extends Page{
         await browser.keys(['Backspace']);
         await this.inputQty1.clearValue();
         await this.inputQty1.setValue(2);
+        await this.headerShoppingCart.click();
+    }
+
+    async typeQty3(){
+        await browser.pause(3000);
+        await this.inputQty2.click();
+        await this.inputQty2.doubleClick();
+        await browser.keys(['Backspace']);
+        await this.inputQty2.clearValue();
+        await this.inputQty2.setValue(3);
         await this.headerShoppingCart.click();
     }
 
@@ -276,7 +342,26 @@ class CartPage extends Page{
         await this.subtotalShippingCart.getText();
     }
 
+    async typeQty(val){
+        await browser.pause(3000);
+        await this.inputQty.click();
+        await this.inputQty.doubleClick();
+        await browser.keys(['Backspace']);
+        await this.inputQty.setValue(val);
+        await this.headerShoppingCart.click();
+    }
 
+    async clickImgAdvanceSetProduct() {
+        await this.imgAdvanceSetProduct.click();
+    }
+
+    async clickcartImgProduct() {
+        await this.cartImgProduct.click();
+    }
+
+    async clickcartProductName() {
+        await this.cartProductName.click();
+    }
 
 
 

@@ -45,7 +45,10 @@ class FilterPage extends Page{
 }
 
 
-//
+get firstskubyasc(){
+    return $("//div[@id='variant']/parent::div/parent::div/parent::div/parent::div/following-sibling::div/div[1]/div/div[1]/a/div/div[2]");
+}
+//"
 
 //--------------pemisah asynch--------------
 

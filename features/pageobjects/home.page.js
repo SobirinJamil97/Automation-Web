@@ -74,6 +74,7 @@ class HomePage extends Page{
 
     get btnShoppingCart(){
         return $("(//*[name()='svg'][@class='MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-style-1u07pm0'])[6]");
+        // return $("//a[contains(@href,'/cart')]/span/svg");
     }
 
     get btnWishlist(){

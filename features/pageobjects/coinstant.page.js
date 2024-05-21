@@ -56,11 +56,14 @@ return $("(//h1[normalize-space()='Transaction Detail'])[1]")
 }
 
 get textpwpredeem(){
-    return $("(//h6[@class='MuiTypography-root MuiTypography-h6 mui-style-15v2ari'][normalize-space()='Pay With Point Redeem'])[1]")
-    }
+    //return $("(//h6[@class='MuiTypography-root MuiTypography-h6 mui-style-15v2ari'][normalize-space()='Pay With Point Redeem'])[1]")
+    
+return $("//h6[text()='Pay With Point Redeem']");
+}
 
     get txtatecommerce() {
-        return $("(//span[@class='MuiTypography-root MuiTypography-caption mui-style-a81z2u'][normalize-space()='at E-Commerce'])[2]");
+        //return $("(//span[@class='MuiTypography-root MuiTypography-caption mui-style-a81z2u'][normalize-space()='at E-Commerce'])[2]");
+   return $("//h6[text()='Pay With Point Redeem']/following-sibling::span[1]");
     }
 
     get txtvoucher() {
@@ -92,8 +95,14 @@ get textpwpredeem(){
         return $("(//*[name()='svg'][@class='MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-style-1n0ep7y'])[1]");
     }
 
+    get txtcashvoucher() {
+        return $("//p[text()='Cash Voucher']");
+    }
 
-  
+    get valuevoucher(){
+    return $("//p[text()='Cash Voucher']/parent::span/following-sibling::p");
+    }
+    
 //----------------------------pemisah-------------------------------------------------------
 async btnaddtocart(){
     await this.addtobag.click();

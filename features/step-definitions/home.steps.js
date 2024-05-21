@@ -7,6 +7,7 @@ const HomePage = require('../pageobjects/home.page');
 const homePage = require('../pageobjects/home.page');
 const CartPage = require('../pageobjects/cart.page');
 const PlpPage = require('../pageobjects/plp.page');
+const Sett = require('../../wdio.conf').config;
 
 const pages = {
     home: HomePage
@@ -14,17 +15,22 @@ const pages = {
 
 Given(/^User at home page$/, async () => {
     // await HomePage.open()
-    await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    // await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    const baseUr = Sett.baseUrl;
+    await browser.url(baseUr);
     await browser.maximizeWindow();
     await browser.pause(1000);
-    await HomePage.clickClosePopupBig();
-
+    if(await HomePage.closePopupBig.isExisting()){
+        await HomePage.clickClosePopupBig();
+    }
 });
 
 //sandratest
 Given(/^User has logged in$/, async () => {
     // await HomePage.open()
-    await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    // await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    const baseUr = Sett.baseUrl;
+    await browser.url(baseUr);
     await browser.maximizeWindow();
     await browser.pause(1000);
     await HomePage.clickClosePopupBig();
@@ -114,11 +120,11 @@ Then(/^Cart badge should available$/, async () => {
 //sandra
 Then(/^User cart should empty$/, async () => {
     //jika cart badge tidak sama dengan 0 ke cart dan hapus
-    //else tidak ada produk didalam cart
+    //else tidak ada produk didalam cart dan lanjut ke step berikutnya
     badgeText = await HomePage.cartBadge.getText();
     if (badgeText != 0) {
         await HomePage.clickShoppingCart();
-        //ambil jumlah produk kemudian taro untuk loopingnya
+        //ambil jumlah produk kemudian looping delete produknya sampai produk di cart 0
         textJmlProduk = await CartPage.cartJumlahProduk.getText();
         jmlProduk = parseInt(textJmlProduk.replace(/[^\d]/g, ''), 10);
         console.log("Produk dalam cart ada = "+jmlProduk);
@@ -141,10 +147,14 @@ When(/^User click shopping cart button$/, async () => {
 
 Given(/^User 1017 has logged in$/, async () => {
     // await HomePage.open()
-    await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    // await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    const baseUr = Sett.baseUrl;
+    await browser.url(baseUr);
     await browser.maximizeWindow();
     await browser.pause(1000);
-    await HomePage.clickClosePopupBig();
+    if(await HomePage.closePopupBig.isExisting()){
+        await HomePage.clickClosePopupBig();
+    }
     await HomePage.clickLogin();
     await expect(LoginPage.loginForm).toBeDisplayed();
     await LoginPage.typeEmail("testerauto1017@mailinator.com");
@@ -167,46 +177,45 @@ Given(/^Product has been added to the cart$/, async () => {
     console.log(numericValueCartSubtotal); // Output: 1297000
     await expect(CartPage.inputQty1).toBeDisplayed();
 });
-
-//sandra
-Given(/^User has logged in and on shipping page$/, async () => {
-    //login
-    await browser.url('https://web.staging-v1.tbsgroup.co.id/');
-    await browser.maximizeWindow();
-    await browser.pause(1000);
-    await HomePage.clickClosePopupBig();
-    await HomePage.clickLogin();
-    await expect(LoginPage.loginForm).toBeDisplayed();
-    await LoginPage.typeEmail("testerauto0707@test.com");
-    await LoginPage.typeOtp("265378");
-    await expect(LoginPage.userName).toBeDisplayed();
-    //cek cart
-    await browser.pause(5000);
-    badgeText = await HomePage.cartBadge.getText();
-    console.log("Badge text= "+badgeText);
-    if (badgeText != 0) {
-        await HomePage.clickShoppingCart();
-        textJmlProduk = await CartPage.cartJumlahProduk.getText();
-        jmlProduk = parseInt(textJmlProduk.replace(/[^\d]/g, ''), 10);
-        console.log("Produk dalam cart ada = "+jmlProduk);
-        while (jmlProduk != 0) {
-            await CartPage.clickTrashIcon();
-            await CartPage.clickConfirm();
-            await expect(CartPage.snackbarDeleteProduct).toHaveText("Produk berhasil dihapus");
-            textJmlProduk = await CartPage.cartJumlahProduk.getText();
-            jmlProduk = parseInt(textJmlProduk.replace(/[^\d]/g, ''), 10);
-        }
-        await browser.pause(2000);
-    } else {
-        console.log("Tidak ada produk di dalam cart");
-    }
-    //add produk to cart
+//jamil
+Given(/^Product has been succes added (.+) to cart$/, async (productName) => {
     await HomePage.clickSearch();
-    await PlpPage.typeSearch("Joy");
+    await PlpPage.typeSearch(productName);
     await PlpPage.clickAddToCartSearch();
     await browser.pause(1000);
-    yy = parseInt(1);
-    await browser.scroll(0, yy);
+    await expect(HomePage.cartBadge).toBeDisplayed();
+    await HomePage.clickShoppingCart();
+    await expect(CartPage.headerShoppingCart).toBeDisplayed();
+    await browser.pause(1000);
+    await expect(CartPage.subtotalOnCart).toBeDisplayed();
+    const cartSubtotal = await CartPage.subtotalOnCart.getText();
+    numericValueCartSubtotal = parseInt(cartSubtotal.replace(/[^\d]/g, ''), 10);
+    console.log(numericValueCartSubtotal); // Output: 1297000
+    await expect(CartPage.inputQty1).toBeDisplayed();
+});
+
+
+//When(/^User search and add product (.+) to cart$/, async(productName) => {
+//sandra
+Given(/^User (.+) has logged in and in homepage$/, async (userAccount) => {
+    //login
+    // await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    const baseUr = Sett.baseUrl;
+    await browser.url(baseUr);
+    await browser.maximizeWindow();
+    await browser.pause(1000);
+    if(await HomePage.closePopupBig.isExisting()){
+        await HomePage.clickClosePopupBig();
+    }
+    await HomePage.clickLogin();
+    await expect(LoginPage.loginForm).toBeDisplayed();
+    await LoginPage.typeEmail(userAccount);
+    await LoginPage.typeOtp("265378");
+    await expect(LoginPage.userName).toBeDisplayed();
+});
+
+//sandra
+When(/^User go to cart and continue to shipping page$/, async () => {
     //ke cart
     await HomePage.clickShoppingCart();
     await expect(CartPage.headerShoppingCart).toBeDisplayed();
@@ -218,4 +227,23 @@ Given(/^User has logged in and on shipping page$/, async () => {
     await expect(CartPage.inputQty1).toBeDisplayed();
     await browser.pause(2000);
     await CartPage.clickBayar();
+});
+
+//jamil
+Given(/^User (.+) has logged in$/, async (akun) => {
+    // await HomePage.open()
+    // await browser.url('https://web.staging-v1.tbsgroup.co.id/');
+    const baseUr = Sett.baseUrl;
+    await browser.url(baseUr);
+    await browser.maximizeWindow();
+    await browser.pause(1000);
+    // await HomePage.clickClosePopupBig();
+    if(await HomePage.closePopupBig.isExisting()){
+        await HomePage.clickClosePopupBig();
+    }
+    await HomePage.clickLogin();
+    await expect(LoginPage.loginForm).toBeDisplayed();
+    await LoginPage.typeEmail(akun);
+    await LoginPage.typeOtp("123321");
+    await expect(LoginPage.userName).toBeDisplayed();
 });
