@@ -55,12 +55,11 @@
     "test-suite-preprod": "wdio run ./wdio-preprod.conf.js --suite %npm_config_dir%",
     "test-suite-firefox": "wdio run ./wdio-firefox.conf.js --suite %npm_config_dir%",
     "test-suite-firefox-preprod": "wdio run ./wdio-firefox-preprod.conf.js --suite %npm_config_dir%",
-    "url-preprod": "set BASE_URL=https://uat-internal.thebodyshop.co.id/",
-    "url-staging": "set BASE_URL=https://web.staging-v1.tbsgroup.co.id/",
+
     "test:staging": "NODE_ENV=staging wdio wdio.conf.js",
     "test:preprod": "NODE_ENV=preprod wdio wdio.conf.js"
   },
-  "name": "icarus-web-automation",
+  "name": "web-automation",
   "description": "run the test with the following command\r npm run test",
   "version": "1.0.0",
   "main": "wdio.conf.js",

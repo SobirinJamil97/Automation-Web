@@ -10,7 +10,7 @@ module.exports = class Page {
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
     open () {
-        return browser.url('https://web.staging-v1.tbsgroup.co.id/')
+        return browser.url('https://opensource-demo.orangehrmlive.com/')
     }
 
     // open (path) {

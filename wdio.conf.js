@@ -128,7 +128,7 @@ exports.config = {
     //     staging: 'https://web.staging-v1.tbsgroup.co.id/',
     //     preprod: 'https://uat-internal.thebodyshop.co.id/'
     // },
-    baseUrl: process.env.BASE_URL || 'https://web.staging-v1.tbsgroup.co.id/',
+    baseUrl: process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com/',
     // baseUrl: (() => {
     //     if (process.env.NODE_ENV === 'staging') {
     //         return 'https://web.staging-v1.tbsgroup.co.id/';
